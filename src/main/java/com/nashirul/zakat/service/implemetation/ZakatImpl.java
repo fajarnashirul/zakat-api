@@ -1,8 +1,9 @@
-package com.nashirul.zakat.service;
+package com.nashirul.zakat.service.implemetation;
 
 import com.nashirul.zakat.dto.ZakatMaalDto;
 import com.nashirul.zakat.dto.ZakatPenghasilanDto;
 import com.nashirul.zakat.dto.ZakatPerdaganganDto;
+import com.nashirul.zakat.service.ZakatService;
 import org.springframework.stereotype.Service;
 
 @Service

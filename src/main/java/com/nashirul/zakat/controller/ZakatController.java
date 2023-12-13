@@ -17,7 +17,7 @@ import java.util.Map;
 public class ZakatController {
 
     @Autowired
-    private ZakatService zakatService;
+    private final ZakatService zakatService;
 
     public ZakatController(ZakatService zakatService) {
         this.zakatService = zakatService;

@@ -1,4 +1,3 @@
-
 spring.datasource.url=jdbc:mysql://localhost:3306/YOUR_DATABASE
 spring.datasource.username=USERNAME
 spring.datasource.password=PASSWORD
@@ -7,3 +6,6 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 spring.jpa.hibernate.ddl-auto=update
 
 spring.jpa.properties.hibernate.id.new_generator_mappings=false
+
+doku.api.client-id=YOUR_DOKU_CLIENT_ID
+doku.api.secret-key=YOUR_DOKU_SECRET_KEY

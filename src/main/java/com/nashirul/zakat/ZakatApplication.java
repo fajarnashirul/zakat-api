@@ -8,6 +8,7 @@ public class ZakatApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ZakatApplication.class, args);
+
 	}
 
 }

@@ -23,7 +23,7 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
 
     public PaymentTransactionDto createPayment(PaymentTransactionDto paymentTransactionDto){
         PaymentTransaction paymentTransaction = new PaymentTransaction();
-        paymentTransaction.setId(UUID.randomUUID());
+//        paymentTransaction.setId(UUID.randomUUID());
         paymentTransaction.setName(paymentTransactionDto.getName());
         paymentTransaction.setEmail(paymentTransactionDto.getEmail());
         paymentTransaction.setNoWhatsApp(paymentTransactionDto.getNoWhatsApp());
@@ -33,6 +33,7 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
         paymentTransaction.setCreatedAt(new Date());
 
         return mapToPaymentTransactionDto(paymentTransactionRepo.save(paymentTransaction));
+
     }
     public List<PaymentTransactionDto> getAllPaymentTransaction(){
 

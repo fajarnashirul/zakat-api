@@ -1,6 +1,7 @@
 package com.nashirul.zakat.controller;
 
 import com.nashirul.zakat.dto.PaymentTransactionDto;
+import com.nashirul.zakat.service.DokuService;
 import com.nashirul.zakat.service.PaymentTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +21,12 @@ public class PaymentTransactionController {
 
     @Autowired
     private final PaymentTransactionService paymentTransactionService;
+    @Autowired
+    private final DokuService dokuService;
 
-    public PaymentTransactionController(PaymentTransactionService paymentTransactionService) {
+    public PaymentTransactionController(PaymentTransactionService paymentTransactionService, DokuService dokuService) {
         this.paymentTransactionService = paymentTransactionService;
+        this.dokuService = dokuService;
     }
 
     @PostMapping(path = "/payment/add", consumes = "application/json")
@@ -43,4 +49,11 @@ public class PaymentTransactionController {
 
         return ResponseEntity.ok(response);
     }
+    @PostMapping(path = "/payment/doku", consumes = "application/json")
+    public ResponseEntity<String> generateSignature(@RequestBody PaymentTransactionDto paymentTransactionDto) throws NoSuchAlgorithmException, InvalidKeyException {
+
+        String result = dokuService.initiateDokuPayment(paymentTransactionDto);
+        return ResponseEntity.ok(result);
+    }
+
 }

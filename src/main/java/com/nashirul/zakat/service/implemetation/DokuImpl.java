@@ -1,5 +1,12 @@
 package com.nashirul.zakat.service.implemetation;
 
+import com.doku.java.library.dto.va.payment.request.CustomerRequestDto;
+import com.doku.java.library.dto.va.payment.request.OrderRequestDto;
+import com.doku.java.library.dto.va.payment.request.PaymentRequestDto;
+import com.doku.java.library.dto.va.payment.request.VirtualAccountInfoRequestDto;
+import com.doku.java.library.dto.va.payment.response.PaymentResponseDto;
+import com.doku.java.library.pojo.SetupConfiguration;
+import com.doku.java.library.service.va.VaServices;
 import com.nashirul.zakat.dto.PaymentTransactionDto;
 import com.nashirul.zakat.service.DokuService;
 import org.json.JSONObject;
@@ -12,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -30,6 +38,13 @@ public class DokuImpl implements DokuService {
     private String clientId;
     @Value("${doku.api.secret-key}")
     private String secretKey;
+
+    private final SetupConfiguration setupConfiguration = SetupConfiguration.builder()
+            .clientId(clientId)
+            .key(secretKey)
+            .environment("sandbox")
+            .setupServerLocation()
+            .build();
     private static final String dokuApiUrl = "api-sandbox.doku.com";
 
     public String initiateDokuPayment(PaymentTransactionDto paymentTransactionDto) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -66,6 +81,32 @@ public class DokuImpl implements DokuService {
             System.out.println("Error Response Body: " + e.getResponseBodyAsString());
             throw e;
         }
+    }
+
+    //virtual account payment
+    @Override
+    public String requestPayment(PaymentTransactionDto paymentTransactionDto) throws IOException {
+        PaymentRequestDto paymentRequestDto = PaymentRequestDto.builder()
+                .customer(CustomerRequestDto.builder()
+                        .email(paymentTransactionDto.getEmail())
+                        .name(paymentTransactionDto.getName())
+                        .build())
+                .order(OrderRequestDto.builder()
+                        .invoiceNumber(paymentTransactionDto.getId().toString())
+                        .amount(paymentTransactionDto.getAmount().toString())
+                        .build())
+                .virtualAccountInfo(VirtualAccountInfoRequestDto.builder()
+                        .expiredTime(60)
+                        .reusableStatus(false)
+                        .info1("FREE TEXT 1")
+                        .info2("FREE TEXT 2")
+                        .info3("FREE TEXT 3")
+                        .build())
+                .setAdditionalInfo()
+                .build();
+
+        PaymentResponseDto paymentResponseDto = new VaServices().generateDokuVa(setupConfiguration, paymentRequestDto);
+        return paymentResponseDto.getVirtualAccountInfo().getHowToPayPage();
     }
 
     //generate digest
@@ -139,7 +180,6 @@ public class DokuImpl implements DokuService {
     private String getUtcTimestamp() {
         // Mendapatkan waktu saat ini dan mengonversinya ke UTC
         LocalDateTime localDateTime = LocalDateTime.now().minusHours(7);
-//        OffsetDateTime offsetDateTime = localDateTime.atOffset(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
                 .withZone(ZoneOffset.UTC);
         return formatter.format(localDateTime);

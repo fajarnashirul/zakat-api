@@ -25,6 +25,7 @@ public class SpringSecurity {
                         authorizeRequests
                                 .requestMatchers("/zakat/**").permitAll()
                                 .requestMatchers("/payment/**").permitAll()
+                                .requestMatchers("/xendit-webhook").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
                 )

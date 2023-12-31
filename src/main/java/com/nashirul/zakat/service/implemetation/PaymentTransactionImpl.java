@@ -23,7 +23,6 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
 
     public PaymentTransactionDto createPayment(PaymentTransactionDto paymentTransactionDto){
         PaymentTransaction paymentTransaction = new PaymentTransaction();
-//        paymentTransaction.setId(UUID.randomUUID());
         paymentTransaction.setName(paymentTransactionDto.getName());
         paymentTransaction.setEmail(paymentTransactionDto.getEmail());
         paymentTransaction.setNoWhatsApp(paymentTransactionDto.getNoWhatsApp());

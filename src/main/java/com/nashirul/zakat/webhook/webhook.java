@@ -23,7 +23,7 @@ public class webhook {
 
         // Validate the signature
         if (xenditService.isValidToken(xCallbackToken)) {
-            // Process Xendit webhook data here
+            // update status
             System.out.println("Received Xendit Webhook. param1: " + invoiceModel.getExternalId()
                     + ", param2: " + invoiceModel.getStatus());
 

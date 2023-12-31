@@ -6,6 +6,8 @@ import com.nashirul.zakat.service.PaymentTransactionService;
 import com.nashirul.zakat.service.XenditService;
 import com.xendit.exception.XenditException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,26 +29,23 @@ public class PaymentTransactionController {
     private final PaymentTransactionService paymentTransactionService;
     @Autowired
     private final DokuService dokuService;
-    private final XenditService xenditService;
+//    private final XenditService xenditService;
 
     public PaymentTransactionController(PaymentTransactionService paymentTransactionService, DokuService dokuService, XenditService xenditService) {
         this.paymentTransactionService = paymentTransactionService;
         this.dokuService = dokuService;
-        this.xenditService = xenditService;
+//        this.xenditService = xenditService;
     }
 
     @PostMapping(path = "/payment/add", consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> createPayments (@RequestBody PaymentTransactionDto paymentTransactionDto){
-        PaymentTransactionDto payment = paymentTransactionService.createPayment(paymentTransactionDto);
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> createPayments (@RequestBody PaymentTransactionDto paymentTransactionDto) throws XenditException {
+        Map<String, Object> payment = paymentTransactionService.createPayment(paymentTransactionDto);
+//        Map<String, Object> response = new HashMap<>();
         if (payment != null) {
-            response.put("result", payment);
-            response.put("message", "segera bayar woy");
+            return ResponseEntity.ok(payment);
         } else {
-            response.put("result", null);
-            response.put("message", "terjadi error");
+            return (ResponseEntity<Map<String, Object>>) ResponseEntity.status(HttpStatus.BAD_GATEWAY);
         }
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping(path = "/payment")
@@ -63,12 +62,12 @@ public class PaymentTransactionController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping(path = "/payment/xendit", consumes = "application/json")
-    public ResponseEntity<String> createPayout(@RequestBody PaymentTransactionDto paymentTransactionDto) throws NoSuchAlgorithmException, InvalidKeyException, IOException, XenditException {
-
-        paymentTransactionDto.setId(UUID.randomUUID());
-        String result = xenditService.createInvoice(paymentTransactionDto);
-        return ResponseEntity.ok(result);
-    }
+//    @PostMapping(path = "/payment/xendit", consumes = "application/json")
+//    public ResponseEntity<Map<String, Object>> createPayout(@RequestBody PaymentTransactionDto paymentTransactionDto) throws XenditException {
+//
+//        PaymentTransactionDto invoice = paymentTransactionService.createPayment(paymentTransactionDto);
+//        String result = xenditService.createInvoice(paymentTransactionDto);
+//        return ResponseEntity.ok(result);
+//    }
 
 }

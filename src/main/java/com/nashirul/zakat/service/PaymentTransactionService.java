@@ -1,11 +1,14 @@
 package com.nashirul.zakat.service;
 
 import com.nashirul.zakat.dto.PaymentTransactionDto;
-import com.nashirul.zakat.entity.PaymentTransaction;
+import com.xendit.exception.XenditException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PaymentTransactionService {
-    PaymentTransactionDto createPayment (PaymentTransactionDto paymentTransactionDto);
+    Map<String, Object> createPayment (PaymentTransactionDto paymentTransactionDto) throws XenditException;
     List<PaymentTransactionDto> getAllPaymentTransaction();
+
+//    void updateStatus(String id, String Status);
 }

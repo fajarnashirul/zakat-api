@@ -9,6 +9,6 @@ import java.util.Map;
 public interface PaymentTransactionService {
     Map<String, Object> createPayment (PaymentTransactionDto paymentTransactionDto) throws XenditException;
     List<PaymentTransactionDto> getAllPaymentTransaction();
-
-//    void updateStatus(String id, String Status);
+    List<PaymentTransactionDto> get10PaymentTransactionByStatus();
+    void updateStatus(String id, String Status);
 }

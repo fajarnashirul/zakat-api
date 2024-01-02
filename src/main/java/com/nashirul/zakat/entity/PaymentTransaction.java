@@ -32,5 +32,5 @@ public class PaymentTransaction {
     @Column(name = "createdAt")
     private Date createdAt;
     @Column(name = "status")
-    private String Status;
+    private String status;
 }

@@ -9,10 +9,7 @@ import com.xendit.exception.XenditException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +39,7 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
             String paymentUrl = xenditService.createInvoice(paymentTransaction);
             //map for payment and payment url
             Map<String, Object> payment = new HashMap<>();
-            payment.put("paymentTransaction", mapToPaymentTransactionDto(paymentTransaction));
+            payment.put("paymentTransaction", mapToPaymentTransactionDtoAdmin(paymentTransaction));
             payment.put("payment url", paymentUrl);
             return payment;
         }catch (XenditException error){
@@ -52,11 +49,37 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
     }
     public List<PaymentTransactionDto> getAllPaymentTransaction(){
 
-        List<com.nashirul.zakat.entity.PaymentTransaction> paymentTransactions = paymentTransactionRepo.findAll();
-        return paymentTransactions.stream().map(this::mapToPaymentTransactionDto).collect(Collectors.toList());
+        List<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findAll();
+        return paymentTransactions.stream().map(this::mapToPaymentTransactionDtoAdmin).collect(Collectors.toList());
     }
 
-    private PaymentTransactionDto mapToPaymentTransactionDto(com.nashirul.zakat.entity.PaymentTransaction paymentTransaction){
+    public List<PaymentTransactionDto> get10PaymentTransactionByStatus(){
+        String status = "paid";
+        List<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findFirst10ByStatusOrderByCreatedAtDesc(status);
+        return paymentTransactions.stream().map(this::mapToPaymentTransactionCustomerDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateStatus(String id, String status) {
+        paymentTransactionRepo.findById(UUID.fromString(id))
+                .ifPresent(paymentTransaction -> {
+                    paymentTransaction.setStatus(status);
+                    paymentTransactionRepo.save(paymentTransaction);
+                });
+    }
+
+    private PaymentTransactionDto mapToPaymentTransactionCustomerDto(PaymentTransaction paymentTransaction){
+        PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
+        paymentTransactionDto.setId(paymentTransaction.getId());
+        paymentTransactionDto.setName(paymentTransaction.getName());
+        paymentTransactionDto.setAmount(paymentTransaction.getAmount());
+        paymentTransactionDto.setCreatedAt(paymentTransaction.getCreatedAt());
+        paymentTransactionDto.setType(paymentTransaction.getType());
+
+        return paymentTransactionDto;
+    }
+
+    private PaymentTransactionDto mapToPaymentTransactionDtoAdmin(PaymentTransaction paymentTransaction){
         PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
         paymentTransactionDto.setId(paymentTransaction.getId());
         paymentTransactionDto.setName(paymentTransaction.getName());
@@ -69,4 +92,5 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
 
         return paymentTransactionDto;
     }
+
 }

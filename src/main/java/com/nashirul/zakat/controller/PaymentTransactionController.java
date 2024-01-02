@@ -54,6 +54,12 @@ public class PaymentTransactionController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping(path = "/payment/customer")
+    public ResponseEntity<List<PaymentTransactionDto>> getFirst10Payments(){
+        List<PaymentTransactionDto> response = paymentTransactionService.get10PaymentTransactionByStatus();
+
+        return ResponseEntity.ok(response);
+    }
     @PostMapping(path = "/payment/doku", consumes = "application/json")
     public ResponseEntity<String> generateSignature(@RequestBody PaymentTransactionDto paymentTransactionDto) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
 

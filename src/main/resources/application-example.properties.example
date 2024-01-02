@@ -9,3 +9,6 @@ spring.jpa.properties.hibernate.id.new_generator_mappings=false
 
 doku.api.client-id=YOUR_DOKU_CLIENT_ID
 doku.api.secret-key=YOUR_DOKU_SECRET_KEY
+
+xendit.api-key=YOUR_XENDIT_SECREAT_KEY
+xendit.valid-token=YOUR_XENDIT_WEBHOOK_TOKEN

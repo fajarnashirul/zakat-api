@@ -7,6 +7,8 @@ import com.nashirul.zakat.service.PaymentTransactionService;
 import com.nashirul.zakat.service.XenditService;
 import com.xendit.exception.XenditException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -47,10 +49,19 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
             return null;
         }
     }
-    public List<PaymentTransactionDto> getAllPaymentTransaction(){
+    public Page<PaymentTransactionDto> getAllPaymentTransaction(String status, Date start, Date end, Pageable pageable){
 
-        List<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findAll();
-        return paymentTransactions.stream().map(this::mapToPaymentTransactionDtoAdmin).collect(Collectors.toList());
+        if (status != null) {
+            if (start != null && end != null) {
+                return findByStatusAndCreatedAt(status, start, end, pageable);
+            }else {
+                return findByStatus(status, pageable);
+            }
+        } else if (start != null && end != null) {
+            return findByCreatedAt( start, end, pageable);
+        } else {
+            return findAll(pageable);
+        }
     }
 
     public List<PaymentTransactionDto> get10PaymentTransactionByStatus(){
@@ -66,6 +77,37 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
                     paymentTransaction.setStatus(status);
                     paymentTransactionRepo.save(paymentTransaction);
                 });
+    }
+
+    private Page<PaymentTransactionDto> findByStatusAndCreatedAt(String status, Date start, Date end, Pageable pageable) {
+        Page<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findByStatusAndCreatedAtBetween(status, start, end, pageable);
+        if (paymentTransactions.isEmpty()){
+            throw new NoSuchElementException("No payments transaction found");
+        }
+        return paymentTransactions.map(this::mapToPaymentTransactionDtoAdmin);
+    }
+    private Page<PaymentTransactionDto> findByStatus(String status, Pageable pageable) {
+        Page<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findByStatus(status, pageable);
+        if (paymentTransactions.isEmpty()){
+            throw new NoSuchElementException("No payments transaction found");
+        }
+        return paymentTransactions.map(this::mapToPaymentTransactionDtoAdmin);
+    }
+
+    private Page<PaymentTransactionDto> findByCreatedAt(Date start, Date end, Pageable pageable) {
+        Page<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findByCreatedAtBetween(start, end, pageable);
+        if (paymentTransactions.isEmpty()){
+            throw new NoSuchElementException("No payments transaction found");
+        }
+        return paymentTransactions.map(this::mapToPaymentTransactionDtoAdmin);
+    }
+
+    private Page<PaymentTransactionDto> findAll(Pageable pageable) {
+        Page<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findAll(pageable);
+        if (paymentTransactions.isEmpty()){
+            throw new NoSuchElementException("No payments transaction found");
+        }
+        return paymentTransactions.map(this::mapToPaymentTransactionDtoAdmin);
     }
 
     private PaymentTransactionDto mapToPaymentTransactionCustomerDto(PaymentTransaction paymentTransaction){

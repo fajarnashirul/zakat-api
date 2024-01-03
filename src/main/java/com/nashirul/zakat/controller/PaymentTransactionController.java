@@ -6,6 +6,11 @@ import com.nashirul.zakat.service.PaymentTransactionService;
 import com.nashirul.zakat.service.XenditService;
 import com.xendit.exception.XenditException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +18,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class PaymentTransactionController {
@@ -49,8 +52,11 @@ public class PaymentTransactionController {
     }
 
     @GetMapping(path = "/payment")
-    public ResponseEntity<List<PaymentTransactionDto>> getAllPayments(){
-        List<PaymentTransactionDto> response = paymentTransactionService.getAllPaymentTransaction();
+    public ResponseEntity<Page<PaymentTransactionDto>> getAllPayments(@RequestParam(required = false) String status,
+                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
+                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+                                                                      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable){
+        Page<PaymentTransactionDto> response = paymentTransactionService.getAllPaymentTransaction(status, start, end, pageable);
 
         return ResponseEntity.ok(response);
     }

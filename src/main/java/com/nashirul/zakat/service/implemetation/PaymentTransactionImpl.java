@@ -3,9 +3,11 @@ package com.nashirul.zakat.service.implemetation;
 import com.nashirul.zakat.dto.PaymentTransactionDto;
 import com.nashirul.zakat.entity.PaymentTransaction;
 import com.nashirul.zakat.repository.PaymentTransactionRepo;
+import com.nashirul.zakat.service.EmailService;
 import com.nashirul.zakat.service.PaymentTransactionService;
 import com.nashirul.zakat.service.XenditService;
 import com.xendit.exception.XenditException;
+import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +20,13 @@ import java.util.stream.Collectors;
 public class PaymentTransactionImpl implements PaymentTransactionService {
     private final PaymentTransactionRepo paymentTransactionRepo;
     private final XenditService xenditService;
+    private final EmailService emailService;
 
     @Autowired
-    public PaymentTransactionImpl(PaymentTransactionRepo paymentTransactionRepo, XenditService xenditService) {
+    public PaymentTransactionImpl(PaymentTransactionRepo paymentTransactionRepo, XenditService xenditService, EmailService emailService) {
         this.paymentTransactionRepo = paymentTransactionRepo;
         this.xenditService = xenditService;
+        this.emailService = emailService;
     }
 
     public Map<String, Object> createPayment(PaymentTransactionDto paymentTransactionDto) throws XenditException {
@@ -76,6 +80,12 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
                 .ifPresent(paymentTransaction -> {
                     paymentTransaction.setStatus(status);
                     paymentTransactionRepo.save(paymentTransaction);
+                    //send email notification for success payment
+                    try {
+                        emailService.sendEmailPaymentSuccess(paymentTransaction);
+                    } catch (EmailException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
     }
 

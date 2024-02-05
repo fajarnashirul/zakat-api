@@ -7,6 +7,9 @@ spring.jpa.hibernate.ddl-auto=update
 
 spring.jpa.properties.hibernate.id.new_generator_mappings=false
 
+#JWT Sceret
+zakat.jwt.secret=YOUR_JWT_SECRET
+
 doku.api.client-id=YOUR_DOKU_CLIENT_ID
 doku.api.secret-key=YOUR_DOKU_SECRET_KEY
 

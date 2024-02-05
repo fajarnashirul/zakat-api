@@ -7,13 +7,17 @@ import com.nashirul.zakat.service.ZakatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@CrossOrigin(origins = "*")
+@RequestMapping("/zakat")
 public class ZakatController {
 
     @Autowired
@@ -23,7 +27,7 @@ public class ZakatController {
         this.zakatService = zakatService;
     }
 
-    @GetMapping(path = "/zakat/penghasilan")
+    @GetMapping(path = "/penghasilan")
     public ResponseEntity<Map<String, Object>>  countZakatPenghasilan (@RequestBody ZakatPenghasilanDto zakatPenghasilanDto){
 
         Long result = zakatService.countZakatPenghasilan(zakatPenghasilanDto);
@@ -38,7 +42,7 @@ public class ZakatController {
         }
         return ResponseEntity.ok(response);
     }
-    @GetMapping(path = "/zakat/perdagangan")
+    @GetMapping(path = "/perdagangan")
     public ResponseEntity<Map<String, Object>> countZakatPerdagangan (@RequestBody ZakatPerdaganganDto zakatPerdaganganDto){
 
         Long result = zakatService.countZakatPerdagangan(zakatPerdaganganDto);
@@ -53,7 +57,7 @@ public class ZakatController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "/zakat/maal")
+    @GetMapping(path = "/maal")
     public ResponseEntity<Map<String, Object>> countZakatMaal (@RequestBody ZakatMaalDto zakatMaalDto){
 
         Long result = zakatService.countZakatMaal(zakatMaalDto);

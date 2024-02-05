@@ -89,6 +89,33 @@ public class PaymentTransactionImpl implements PaymentTransactionService {
                 });
     }
 
+    @Override
+    public Map<String, Object> getTransactionMetric(Date start, Date end) {
+        List<PaymentTransaction> paymentTransactions= paymentTransactionRepo.findByCreatedAtBetween(start, end);
+        if (paymentTransactions.isEmpty()){
+            throw new NoSuchElementException();
+        }
+        Double totalIncome = paymentTransactions.stream()
+                .filter(payment -> "PAID".equals(payment.getStatus()))
+                .mapToDouble(PaymentTransaction::getAmount)
+                .sum();
+
+        Long successTransaction = paymentTransactions.stream()
+                .filter(payment -> "PAID".equals(payment.getStatus()))
+                .count();
+
+        Long failureTransaction = paymentTransactions.stream()
+                .filter(payment -> !payment.getStatus().equals("PAID"))
+                .count();
+
+        Map<String, Object> transactionMetric = new HashMap<>();
+        transactionMetric.put("income",totalIncome);
+        transactionMetric.put("success", successTransaction);
+        transactionMetric.put("failure",failureTransaction);
+
+        return transactionMetric;
+    }
+
     private Page<PaymentTransactionDto> findByStatusAndCreatedAt(String status, Date start, Date end, Pageable pageable) {
         Page<PaymentTransaction> paymentTransactions = paymentTransactionRepo.findByStatusAndCreatedAtBetween(status, start, end, pageable);
         if (paymentTransactions.isEmpty()){

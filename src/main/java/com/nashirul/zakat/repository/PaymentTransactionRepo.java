@@ -15,4 +15,5 @@ public interface PaymentTransactionRepo extends JpaRepository<PaymentTransaction
     Page<PaymentTransaction> findByStatus(String status, Pageable pageable);
     Page<PaymentTransaction> findByCreatedAtBetween(Date start, Date end, Pageable pageable);
     Page<PaymentTransaction> findAll(Pageable pageable);
+    List<PaymentTransaction> findByCreatedAtBetween(Date start, Date end);
 }

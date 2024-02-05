@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface PaymentTransactionService {
-    Map<String, Object> createPayment (PaymentTransactionDto paymentTransactionDto) throws XenditException;
+    Map<String, Object> createPayment(PaymentTransactionDto paymentTransactionDto) throws XenditException;
     Page<PaymentTransactionDto> getAllPaymentTransaction(String status, Date start, Date end, Pageable pageable);
     List<PaymentTransactionDto> get10PaymentTransactionByStatus();
     void updateStatus(String id, String Status);
+    Map<String, Object>getTransactionMetric(Date start, Date end);
 }

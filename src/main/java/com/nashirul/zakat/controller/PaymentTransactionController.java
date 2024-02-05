@@ -77,6 +77,18 @@ public class PaymentTransactionController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(path = "/metric")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> transactionMetric(@RequestParam(required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
+                                               @RequestParam(required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date end){
+        try{
+            Map<String, Object> response = paymentTransactionService.getTransactionMetric(start, end);
+            return ResponseEntity.ok(response);
+        }catch (NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment Transaction Not Found");
+        }
+    }
 //    @PostMapping(path = "/payment/doku", consumes = "application/json")
 //    public ResponseEntity<String> generateSignature(@RequestBody PaymentTransactionDto paymentTransactionDto) throws IOException {
 //
